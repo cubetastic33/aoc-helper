@@ -1,0 +1,5 @@
+/.idea
+/target
+/inputs
+**/*.rs.bk
+Cargo.lock

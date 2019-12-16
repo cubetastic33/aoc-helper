@@ -1,0 +1,15 @@
+[package]
+name = "aoc-helper"
+version = "0.1.0"
+repository = "https://github.com/cubetastic33/aoc-helper"
+authors = ["cubetastic <cubetastic33@gmail.com>"]
+edition = "2018"
+description = "A helper for the advent of code"
+license = "MIT"
+readme = "README.md"
+keywords = ["aoc", "helper"]
+
+[dependencies]
+chrono = "0.4.10"
+reqwest = "0.9.22"
+failure = "0.1.6"
