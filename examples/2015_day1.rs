@@ -26,7 +26,7 @@ fn main() {
     });
 
     // Add some example cases for part 2
-    helper.part2_examples(vec![")", "()())"]);
+    helper.part2_examples(&[")", "()())"]);
     // Add a solver function for part 2
     helper.part2(first_instruction_that_sends_to_basement);
 

@@ -34,7 +34,6 @@ use std::env;
 
 use chrono::prelude::*;
 use failure::{Error, format_err};
-use reqwest::Client;
 
 /// The `Helper` struct stores all necessary information for an aoc day.
 ///
@@ -177,9 +176,9 @@ impl<T: Clone, D: Display> Helper<T, D> {
     /// use aoc_helper::Helper;
     ///
     /// let helper = Helper::new(2018, 4);
-    /// helper.part1_examples(vec!["part 1", "example", "cases"]);
+    /// helper.part1_examples(&["part 1", "example", "cases"]);
     /// ~~~~
-    pub fn part1_examples<S: ToString>(&mut self, examples: Vec<S>) {
+    pub fn part1_examples<S: ToString>(&mut self, examples: &[S]) {
         self.part1_examples = examples.iter().map(|x| x.to_string()).collect();
     }
 
@@ -192,9 +191,9 @@ impl<T: Clone, D: Display> Helper<T, D> {
     /// use aoc_helper::Helper;
     ///
     /// let helper = Helper::new(2018, 4);
-    /// helper.part2_examples(vec!["part 2", "example", "cases"]);
+    /// helper.part2_examples(&["part 2", "example", "cases"]);
     /// ~~~~
-    pub fn part2_examples<S: ToString>(&mut self, examples: Vec<S>) {
+    pub fn part2_examples<S: ToString>(&mut self, examples: &[S]) {
         self.part2_examples = examples.iter().map(|x| x.to_string()).collect();
     }
 
@@ -307,11 +306,9 @@ impl<T: Clone, D: Display> Helper<T, D> {
         input_file.read_to_string(&mut contents)?;
         if contents.len() == 0 {
             // Get the input from the website
-            let client = Client::new();
-            let mut response = client.get(&format!("https://adventofcode.com/{}/day/{}/input", self.year, self.day))
-                .header(reqwest::header::COOKIE, String::from("session=") + self.session_id.as_ref().unwrap())
-                .send()?;
-            std::io::copy(&mut response, &mut input_file)?;
+            let response = ureq::get(&format!("https://adventofcode.com/{}/day/{}/input", self.year, self.day))
+                .set("Cookie", &(String::from("session=") + self.session_id.as_ref().unwrap())).call();
+            std::io::copy(&mut response.into_reader(), &mut input_file)?;
             let mut input_file = File::open(&self.input_path)?;
             input_file.read_to_string(&mut contents)?;
         }

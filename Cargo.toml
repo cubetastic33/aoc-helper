@@ -1,6 +1,6 @@
 [package]
 name = "aoc-helper"
-version = "0.1.0"
+version = "0.1.1"
 repository = "https://github.com/cubetastic33/aoc-helper"
 authors = ["cubetastic <cubetastic33@gmail.com>"]
 edition = "2018"
@@ -11,5 +11,5 @@ keywords = ["aoc", "helper"]
 
 [dependencies]
 chrono = "0.4.10"
-reqwest = "0.9.22"
+ureq = "0.11.2"
 failure = "0.1.6"
