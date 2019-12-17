@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! cargo-aoc = "0.1.0"
+//! cargo-aoc = "0.1.2"
 //! ```
 //!
 //! You also need to provide a session ID for `aoc-helper` to be able to

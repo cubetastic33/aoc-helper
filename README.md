@@ -17,7 +17,7 @@ To get started, add `aoc-helper` to the `dependencies` section in your
 
 ```toml
 [dependencies]
-cargo-aoc = "0.1.0"
+aoc-helper = "0.1.2"
 ```
 
 You also need to provide a session ID for `aoc-helper` to be able to
@@ -41,6 +41,7 @@ use aoc_helper::Helper;
 // Create a new `Helper` instance for day 1 of 2015
 // Note: this is not the actual problem from day 1 of 2015
 let helper = Helper::new(2015, 1);
+
 // Add some example cases for part 2
 helper.part2_examples(vec!["random\nstuff\nfoo\nbaz", "foo\nbar\ntest\cases"]);
 // Add a solver function for part 2
