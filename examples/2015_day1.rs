@@ -1,7 +1,7 @@
 use aoc_helper::Helper;
 
 // The solver function for part 1
-fn first_instruction_that_sends_to_basement(instructions: String) -> i32 {
+fn first_instruction_that_sends_to_basement(instructions: String) -> usize {
     let mut floor = 0;
     for (i, instruction) in instructions.chars().enumerate() {
         match instruction {
@@ -9,7 +9,7 @@ fn first_instruction_that_sends_to_basement(instructions: String) -> i32 {
             _ => floor -= 1,
         }
         if floor < 0 {
-            return i as i32 + 1;
+            return i + 1;
         }
     }
     unreachable!();
