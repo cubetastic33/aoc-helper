@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! cargo-aoc = "0.1.2"
+//! aoc-helper = "0.1.2"
 //! ```
 //!
 //! You also need to provide a session ID for `aoc-helper` to be able to
@@ -41,19 +41,23 @@ use failure::{Error, format_err};
 /// optional serializer function to serialize the input data into a custom type.
 /// The serializer, and the solver functions if you're not using a custom
 /// serializer function, take `&str`s as input.
-pub struct Helper<T, D: Display> {
+pub struct Helper<SerialT, P1, P2 = P1> {
     year: i32,
     day: u32,
     session_id: Option<String>,
     input_path: String,
     part1_examples: Vec<String>,
     part2_examples: Vec<String>,
-    serializer: fn(&str) -> T,
-    part1: Option<fn(T) -> D>,
-    part2: Option<fn(T) -> D>,
+    serializer: fn(&str) -> SerialT,
+    part1: Option<fn(SerialT) -> P1>,
+    part2: Option<fn(SerialT) -> P2>,
 }
 
-impl<D: Display> Helper<String, D> {
+impl<P1, P2> Helper<String, P1, P2>
+where
+    P1: Display,
+    P2: Display
+{
     /// Creates a new `Helper` instance for the provided year and day.
     ///
     /// # Example
@@ -104,7 +108,12 @@ impl<D: Display> Helper<String, D> {
     }
 }
 
-impl<T: Clone, D: Display> Helper<T, D> {
+impl<SerialT, P1, P2> Helper<SerialT, P1, P2>
+where
+    SerialT: Clone,
+    P1: Display,
+    P2: Display
+{
     /// Creates a new `Helper` instance for the provided year and day, with a
     /// custom serializer function.
     ///
@@ -115,7 +124,7 @@ impl<T: Clone, D: Display> Helper<T, D> {
     ///
     /// let helper = Helper::new_with_input_file(2017, 2, |input| input.split_whitespace().collect::<Vec<_>>());
     /// ~~~~
-    pub fn new_with_serializer(year: i32, day: u32, serializer: fn(&str) -> T) -> Self {
+    pub fn new_with_serializer(year: i32, day: u32, serializer: fn(&str) -> SerialT) -> Self {
         Helper {
             year,
             day,
@@ -139,7 +148,7 @@ impl<T: Clone, D: Display> Helper<T, D> {
     ///
     /// let helper = Helper::new_with_serializer_and_input_file(2017, 2, |input| input.lines().collect::<Vec<_>>(), "in.txt");
     /// ~~~~
-    pub fn new_with_serializer_and_input_file(year: i32, day: u32, serializer: fn(&str) -> T, input_path: &str) -> Self {
+    pub fn new_with_serializer_and_input_file(year: i32, day: u32, serializer: fn(&str) -> SerialT, input_path: &str) -> Self {
         Helper {
             year,
             day,
@@ -208,7 +217,7 @@ impl<T: Clone, D: Display> Helper<T, D> {
     /// let helper = Helper::new(2018, 7);
     /// helper.part1(|x| x.chars().filter(|&y| y == 'z').count());
     /// ~~~~
-    pub fn part1(&mut self, solver: fn(T) -> D) {
+    pub fn part1(&mut self, solver: fn(SerialT) -> P1) {
         self.part1 = Some(solver);
     }
 
@@ -223,7 +232,7 @@ impl<T: Clone, D: Display> Helper<T, D> {
     /// ~~~~
     /// Provide the solver function for the part 2 problem. The return type
     /// should implement [Display](https://doc.rust-lang.org/std/fmt/trait.Display.html).
-    pub fn part2(&mut self, solver: fn(T) -> D) {
+    pub fn part2(&mut self, solver: fn(SerialT) -> P2) {
         self.part2 = Some(solver);
     }
 
