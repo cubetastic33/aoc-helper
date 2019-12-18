@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! aoc-helper = "0.1.2"
+//! aoc-helper = "0.1.3"
 //! ```
 //!
 //! You also need to provide a session ID for `aoc-helper` to be able to

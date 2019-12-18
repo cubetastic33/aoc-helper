@@ -1,6 +1,6 @@
 [package]
 name = "aoc-helper"
-version = "0.1.2"
+version = "0.1.3"
 repository = "https://github.com/cubetastic33/aoc-helper"
 authors = ["cubetastic <cubetastic33@gmail.com>"]
 edition = "2018"
