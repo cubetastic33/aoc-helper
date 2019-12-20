@@ -31,9 +31,39 @@ use std::fmt::Display;
 use std::fs::{File, OpenOptions, create_dir_all};
 use std::io::Read;
 use std::env;
+use std::error::Error;
 
 use chrono::prelude::*;
-use failure::{Error, format_err};
+
+#[derive(Debug, Copy, Clone)]
+pub enum AocError {
+    MissingSessionId,
+    NeedPart1,
+    NeedPart2,
+    NoSolvers,
+    SpecifiedDateInFuture,
+    NoPuzzleOnDate,
+}
+
+impl Display for AocError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let msg = match self {
+            AocError::MissingSessionId => "No session ID specified",
+            AocError::NeedPart1 => "No solver function given for part 1",
+            AocError::NeedPart2 => "No solver function given for part 2",
+            AocError::NoSolvers => "No solver functions specified",
+            AocError::SpecifiedDateInFuture => "The specified puzzle date is in the future",
+            AocError::NoPuzzleOnDate => "There was no puzzle on the specified date",
+        };
+        write!(f, "Error: {}", msg)
+    }
+}
+
+impl Error for AocError {}
+
+fn aoc_err(err: AocError) -> Result<(), Box<dyn Error>> {
+    Err(Box::new(err))
+}
 
 /// The `Helper` struct stores all necessary information for an aoc day.
 ///
@@ -249,20 +279,20 @@ where
     /// helper.part1(|x| x.chars.filter(|&y| y == 'z').count());
     /// helper.test().unwrap();
     /// ~~~~
-    pub fn test(&self) -> Result<(), Error> {
+    pub fn test(&self) -> Result<(), AocError> {
         println!("AOC {}, day {}", self.year, self.day);
         for (i, example) in self.part1_examples.iter().enumerate() {
             if let Some(part1) = self.part1 {
                 println!("Part 1, Example {}: {}", i + 1, part1((self.serializer)(&example)));
             } else {
-                return Err(format_err!("Error: No solver function given for part 1"));
+                return Err(AocError::NeedPart1);
             }
         }
         for (i, example) in self.part2_examples.iter().enumerate() {
             if let Some(part2) = self.part2 {
                 println!("Part 2, Example {}: {}", i + 1, part2((self.serializer)(&example)));
             } else {
-                return Err(format_err!("Error: No solver function given for part 2"));
+                return Err(AocError::NeedPart2);
             }
         }
         Ok(())
@@ -279,18 +309,18 @@ where
     /// helper.part2(|x| x.lines().filter(|&y| y.contains("foo")).count());
     /// helper.run().unwrap();
     /// ~~~~
-    pub fn run(&self) -> Result<(), Error> {
+    pub fn run(&self) -> Result<(), Box<dyn Error>> {
         if self.session_id == None {
-            return Err(format_err!("Error: No session ID specified"));
+            return aoc_err(AocError::MissingSessionId);
         }
         let running_date = NaiveDate::from_ymd(self.year, 12, self.day);
         // Due to timezone differences, this will be a little more lenient that the aoc website in accepting dates
         let today = Utc::today();
         let max_year = if today.month() < 12 { today.year() - 1 } else { today.year() };
         if running_date > NaiveDate::from_ymd(max_year, 12, 25) {
-            return Err(format_err!("Error: The specified puzzle date is in the future"));
+            return aoc_err(AocError::SpecifiedDateInFuture);
         } else if running_date < NaiveDate::from_ymd(2015, 12, 1) || self.day > 25 {
-            return Err(format_err!("Error: There was no puzzle on the specified date"));
+            return aoc_err(AocError::NoPuzzleOnDate);
         }
         let mut input_file = match OpenOptions::new()
             .read(true)
@@ -307,7 +337,7 @@ where
                         .create(true)
                         .open(&self.input_path)?
                 } else {
-                    return Err(format_err!("{}", e.to_string()));
+                    return Err(Box::new(e));
                 }
             },
         };
@@ -332,7 +362,7 @@ where
             executed = true;
         }
         if !executed {
-            return Err(format_err!("Error: no solver functions specified"));
+            return aoc_err(AocError::NoSolvers);
         }
         Ok(())
     }

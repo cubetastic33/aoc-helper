@@ -12,4 +12,3 @@ keywords = ["aoc", "helper"]
 [dependencies]
 chrono = "0.4.10"
 ureq = "0.11.2"
-failure = "0.1.6"
