@@ -11,8 +11,7 @@ crate is a library you can import and use in your code. This aims to make it
 easier to share and debug other people's code, and to perhaps be easier to
 set up.
 
-`aoc-helper` is a very simple crate right now, and all the functionality is
-in the `Helper` struct.
+For more examples, check out the examples directory in the repository.
 
 ## Usage
 
