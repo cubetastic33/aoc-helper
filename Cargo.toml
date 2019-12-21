@@ -1,6 +1,6 @@
 [package]
 name = "aoc-helper"
-version = "0.1.3"
+version = "0.2.0"
 repository = "https://github.com/cubetastic33/aoc-helper"
 authors = ["cubetastic <cubetastic33@gmail.com>"]
 edition = "2018"
@@ -9,6 +9,10 @@ license = "MIT"
 readme = "README.md"
 keywords = ["aoc", "helper"]
 
+[features]
+config-file = ["toml"]
+
 [dependencies]
-chrono = "0.4.10"
+time = "0.2.0"
 ureq = "0.11.2"
+toml = { version = "0.5.5", optional = true }

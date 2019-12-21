@@ -1,5 +1,9 @@
 # AOC Helper documentation
 
+![rustc 1.40.0](https://img.shields.io/badge/rustc-1.40.0-blue?style=flat-square)
+[![crates.io 0.2.0](https://img.shields.io/crates/v/aoc-helper?style=flat-square)](https://crates.io/crates/aoc-helper)
+![license](https://img.shields.io/crates/l/aoc-helper?style=flat-square)
+
 AOC Helper is a crate to make solving and sharing aoc problems in rust
 easier. It is inspired by [cargo-aoc](https://github.com/gobanos/cargo-aoc).
 `cargo-aoc` is a binary that will also take care of compilation, while this
@@ -17,7 +21,7 @@ To get started, add `aoc-helper` to the `dependencies` section in your
 
 ```toml
 [dependencies]
-aoc-helper = "0.1.3"
+aoc-helper = "0.2.0"
 ```
 
 You also need to provide a session ID for `aoc-helper` to be able to
@@ -36,19 +40,21 @@ serializer function, take `&str`s as input.
 ## Example
 
 ```rust
-use aoc_helper::Helper;
+use aoc_helper::{AocDay, Puzzle};
 
-// Create a new `Helper` instance for day 1 of 2015
+// Create a new `AocDay` instance for day 1 of 2015
 // Note: this is not the actual problem from day 1 of 2015
-let helper = Helper::new(2015, 1);
+let day_1 = AocDay::new(2015, 1);
 
-// Add some example cases for part 2
-helper.part2_examples(vec!["random\nstuff\nfoo\nbaz", "foo\nbar\ntest\cases"]);
-// Add a solver function for part 2
-helper.part2(|x| x.lines().filter(|&y| y.contains("foo")).count());
+// Create a new `Puzzle` instance for part 2
+let part_2 = Puzzle::new(
+        2,
+        |x| x.lines().filter(|&y| y.contains("foo")).count()
+    )
+    .with_examples(&["random\nstuff\nfoo\nbaz", "foo\nbar\ntest\ncases"]);
 
 // Run the solver functions on the example cases
-helper.test().unwrap();
+day_1.test(&part_2);
 // Run the solver functions on the day's input
-helper.run().unwrap();
+day_1.run(&part_2).unwrap();
 ```
