@@ -1,4 +1,4 @@
-use aoc_helper::Helper;
+use aoc_helper::{AocDay, Puzzle};
 
 // The solver function for part 1
 fn first_instruction_that_sends_to_basement(instructions: String) -> usize {
@@ -16,22 +16,26 @@ fn first_instruction_that_sends_to_basement(instructions: String) -> usize {
 }
 
 fn main() {
-    // Create a new `Helper` instance for day 1 of aoc 2015
-    let mut helper = Helper::new(2015, 1);
+    // NOTE: You need to specify a session ID for this to work
 
-    // Add a solver function for part 1
-    helper.part1(|instructions| {
-        instructions.chars().filter(|&x| x == '(').count() as i32
-        - instructions.chars().filter(|&x| x == ')').count() as i32
-    });
+    // Create a new `AocDay` instance for day 1 of aoc 2015
+    let mut day_1 = AocDay::new(2015, 1);
 
-    // Add some example cases for part 2
-    helper.part2_examples(&[")", "()())"]);
-    // Add a solver function for part 2
-    helper.part2(first_instruction_that_sends_to_basement);
+    // Create a new `Puzzle` instance for part 1
+    let part_1 = Puzzle::new(1, |instructions| {
+            instructions.chars().filter(|&x| x == '(').count() as i32
+            - instructions.chars().filter(|&x| x == ')').count() as i32
+        })
+        .with_examples(&["(())", "()()", ")))", ")())())"]);
 
-    // Run the solver functions on the example cases
-    helper.test().unwrap();
-    // Run the solver functions on the day's input
-    helper.run().unwrap();
+    // Create a new `Puzzle` instance for part 2
+    let part_2 = Puzzle::new(2, first_instruction_that_sends_to_basement)
+        .with_examples(&[")", "()())"]);
+
+    // Test the example cases
+    day_1.test(&part_1);
+    day_1.test(&part_2);
+    // Run the day's input
+    day_1.run(&part_1);
+    day_1.run(&part_2);
 }
