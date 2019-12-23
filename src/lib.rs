@@ -36,11 +36,12 @@
 
 use std::fmt::Display;
 use std::fs::{File, OpenOptions, create_dir_all};
-use std::io::Read;
+use std::io::{Read, Write};
 use std::env;
 use std::error::Error;
 
-use time::Date;
+use time::{Date, Instant};
+use colored::*;
 #[cfg(feature = "config-file")]
 use toml::Value;
 
@@ -287,6 +288,7 @@ impl<T> AocDay<T> {
                 }
             },
         };
+        
         let mut contents = String::new();
         println!("{}", contents);
         input_file.read_to_string(&mut contents)?;
@@ -298,9 +300,55 @@ impl<T> AocDay<T> {
             let mut input_file = File::open(&self.input_path)?;
             input_file.read_to_string(&mut contents)?;
         }
+        
+        print!("[{} {}, {} {}, {} {}]: ",
+            "AoC".yellow(), self.year,
+            "day".bright_cyan(), self.day,
+            "part".bright_cyan(), puzzle.part);
+        std::io::stdout().flush()?;
+
         let input = (self.serializer)(contents.trim().to_string());
-        println!("Running day {} of AOC {}", self.day, self.year);
-        println!("Part {}: {}", puzzle.part, (puzzle.solver)(input));
+        let start_time = Instant::now();
+        let output = (puzzle.solver)(input);
+        let elapsed = start_time.elapsed();
+        println!("{}", output.to_string().bright_white());
+
+        let time_taken = {
+            let mut msg_str = String::new();
+            let (d, h, m, s, ms, us, ns) = (
+                elapsed.whole_days(),
+                elapsed.whole_hours() % 24,
+                elapsed.whole_minutes() % 60,
+                elapsed.whole_seconds() % 60,
+                elapsed.whole_milliseconds() % 1000,
+                elapsed.whole_microseconds() % 1000,
+                elapsed.whole_nanoseconds() % 1000,
+            );
+            if d > 0 {
+                msg_str.push_str(&format!("{}d ", d));
+            }
+            if h > 0 {
+                msg_str.push_str(&format!("{}h ", h));
+            }
+            if m > 0 {
+                msg_str.push_str(&format!("{}m ", m));
+            }
+            if s > 0 {
+                msg_str.push_str(&format!("{}s ", s));
+            }
+            if ms > 0 {
+                msg_str.push_str(&format!("{}ms ", ms));
+            }
+            if us > 0 {
+                msg_str.push_str(&format!("{}us ", us));
+            }
+            if ns > 0 {
+                msg_str.push_str(&format!("{}ns ", ns));
+            }
+            msg_str
+        };
+        println!("{} {}", "Finished in".bright_green(), time_taken);
+        
         Ok(())
     }
 }
