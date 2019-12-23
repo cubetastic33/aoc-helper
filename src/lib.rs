@@ -31,7 +31,7 @@
 //! session-id = "82942d3671962a9f17f8f81723d45b0fcdf8b3b5bf6w3954f02101fa5de1420b6ecd30ed550133f32d6a5c00233076af"
 //! ~~~~
 //!
-//! Then, create an instance of [`AocDay`](.//struct.AocDay.html). Look at its documentation for
+//! Then, create an instance of [`AocDay`](./struct.AocDay.html). Look at its documentation for
 //! information.
 
 use std::fmt::Display;

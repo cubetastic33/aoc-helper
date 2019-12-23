@@ -26,15 +26,19 @@ aoc-helper = "0.2.0"
 You also need to provide a session ID for `aoc-helper` to be able to
 download your input files. The session ID is stored in a cookie called
 `session` in your browser on the [aoc website](https://adventofcode.com) if
-you're logged in. You can provide the session ID either through an
-environment variable with the name `AOC_SESSION_ID` or through the
-`session_id` function on `Helper`.
-The `Helper` struct stores all necessary information for an aoc day.
+you're logged in. You can provide the session ID through an
+environment variable with the name `AOC_SESSION_ID`, through the
+`session_id` functions on `Helper`, or by using an `aoc_helper.toml` file.
 
-One instance stores the information for one aoc day. You can provide an
-optional serializer function to serialize the input data into a custom type.
-The serializer, and the solver functions if you're not using a custom
-serializer function, take `&str`s as input.
+If you're using an `aoc_helper.toml` file, you need to specify the `config-file` feature and
+specify your session ID in `aoc_helper.toml` like this:
+
+```toml
+session-id = "82942d3671962a9f17f8f81723d45b0fcdf8b3b5bf6w3954f02101fa5de1420b6ecd30ed550133f32d6a5c00233076af"
+```
+
+Then, create an instance of `AocDay`. Look at its documentation for
+information.
 
 ## Example
 
