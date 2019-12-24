@@ -23,8 +23,9 @@ fn main() {
 
     // Create a new `Puzzle` instance for part 1
     let part_1 = Puzzle::new(1, |instructions: String| {
-            instructions.chars().filter(|&x| x == '(').count() as i32
-            - instructions.chars().filter(|&x| x == ')').count() as i32
+            let mut floor = 0;
+            instructions.chars().for_each(|x| if x == '(' { floor += 1 } else { floor -= 1 });
+            floor
         })
         .with_examples(&["(())", "()()", ")))", ")())())"]);
 
