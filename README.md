@@ -20,7 +20,7 @@ To get started, add `aoc-helper` to the `dependencies` section in your
 
 ```toml
 [dependencies]
-aoc-helper = "0.2.0"
+aoc-helper = "0.2.1"
 ```
 
 You also need to provide a session ID for `aoc-helper` to be able to
@@ -45,19 +45,21 @@ information.
 ```rust
 use aoc_helper::{AocDay, Puzzle};
 
-// Create a new `AocDay` instance for day 1 of 2015
-// Note: this is not the actual problem from day 1 of 2015
-let day_1 = AocDay::new(2015, 1);
+fn main() {
+    // Create a new `AocDay` instance for day 1 of 2015
+    // Note: this is not the actual problem from day 1 of 2015
+    let mut day_1 = AocDay::new(2015, 1);
 
-// Create a new `Puzzle` instance for part 2
-let part_2 = Puzzle::new(
+    // Create a new `Puzzle` instance for part 2
+    let part_2 = Puzzle::new(
         2,
-        |x| x.lines().filter(|&y| y.contains("foo")).count()
-    )
-    .with_examples(&["random\nstuff\nfoo\nbaz", "foo\nbar\ntest\ncases"]);
+        |x: String| x.lines().filter(|&y| y.contains("foo")).count()
+        )
+        .with_examples(&["random\nstuff\nfoo\nbaz", "foo\nbar\ntest\ncases"]);
 
-// Run the solver functions on the example cases
-day_1.test(&part_2);
-// Run the solver functions on the day's input
-day_1.run(&part_2).unwrap();
+    // Run the solver functions on the example cases
+    day_1.test(&part_2);
+    // Run the solver functions on the day's input
+    day_1.run(&part_2).unwrap();
+}
 ```
