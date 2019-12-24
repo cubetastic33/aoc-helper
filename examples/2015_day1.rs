@@ -22,9 +22,10 @@ fn main() {
     let mut day_1 = AocDay::new(2015, 1);
 
     // Create a new `Puzzle` instance for part 1
-    let part_1 = Puzzle::new(1, |instructions| {
-            instructions.chars().filter(|&x| x == '(').count() as i32
-            - instructions.chars().filter(|&x| x == ')').count() as i32
+    let part_1 = Puzzle::new(1, |instructions: String| {
+            let mut floor = 0;
+            instructions.chars().for_each(|x| if x == '(' { floor += 1 } else { floor -= 1 });
+            floor
         })
         .with_examples(&["(())", "()()", ")))", ")())())"]);
 
@@ -36,6 +37,6 @@ fn main() {
     day_1.test(&part_1);
     day_1.test(&part_2);
     // Run the day's input
-    day_1.run(&part_1);
-    day_1.run(&part_2);
+    day_1.run(&part_1).unwrap();
+    day_1.run(&part_2).unwrap();
 }

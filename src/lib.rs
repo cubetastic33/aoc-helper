@@ -14,7 +14,7 @@
 //!
 //! ~~~~
 //! [dependencies]
-//! aoc-helper = "0.2.0"
+//! aoc-helper = "0.2.1"
 //! ~~~~
 //!
 //! You also need to provide a session ID for `aoc-helper` to be able to
@@ -40,7 +40,10 @@ use std::io::Read;
 use std::env;
 use std::error::Error;
 
-use time::Date;
+use time::{Date, Instant};
+use std::io::Write;
+#[cfg(feature = "colored-output")]
+use colored::*;
 #[cfg(feature = "config-file")]
 use toml::Value;
 
@@ -66,6 +69,67 @@ impl Error for AocError {}
 
 fn aoc_err(err: AocError) -> Result<(), Box<dyn Error>> {
     Err(Box::new(err))
+}
+
+macro_rules! print_info {
+    ($aoc_day:ident, $puzzle:expr) => {
+        #[cfg(feature = "colored-output")]
+        print!("[{} {}, {} {}, {} {}]: ",
+                "AoC".yellow(), $aoc_day.year,
+                "day".bright_cyan(), $aoc_day.day,
+                "part".bright_cyan(), $puzzle.part);
+        #[cfg(not(feature = "colored-output"))]
+        print!("[AoC {}, day {}, part {}]: ", $aoc_day.year, $aoc_day.day, $puzzle.part);
+        std::io::stdout().flush().unwrap();
+    }
+}
+
+macro_rules! run_solver {
+    ($puzzle:expr, $input:expr) => {
+        let start_time = Instant::now();
+        let output = ($puzzle.solver)($input);
+        let elapsed = start_time.elapsed();
+        println!("{}", output);
+
+        let time_taken = {
+            let mut msg_str = String::new();
+            let (d, h, m, s, ms, us, ns) = (
+                elapsed.whole_days(),
+                elapsed.whole_hours() % 24,
+                elapsed.whole_minutes() % 60,
+                elapsed.whole_seconds() % 60,
+                elapsed.whole_milliseconds() % 1000,
+                elapsed.whole_microseconds() % 1000,
+                elapsed.whole_nanoseconds() % 1000,
+            );
+            if d > 0 {
+                msg_str.push_str(&format!("{}d ", d));
+            }
+            if h > 0 {
+                msg_str.push_str(&format!("{}h ", h));
+            }
+            if m > 0 {
+                msg_str.push_str(&format!("{}m ", m));
+            }
+            if s > 0 {
+                msg_str.push_str(&format!("{}s ", s));
+            }
+            if ms > 0 {
+                msg_str.push_str(&format!("{}ms ", ms));
+            }
+            if us > 0 {
+                msg_str.push_str(&format!("{}μs ", us));
+            }
+            if ns > 0 {
+                msg_str.push_str(&format!("{}ns ", ns));
+            }
+            msg_str
+        };
+        #[cfg(feature = "colored-output")]
+        println!("{} {}", "Finished in".bright_green(), time_taken.bright_white());
+        #[cfg(not(feature = "colored-output"))]
+        println!("Finished in {}", time_taken);
+    }
 }
 
 /// The `AocDay` struct stores information for an aoc day.
@@ -192,7 +256,7 @@ impl<T> AocDay<T> {
 
     /// Run a solver function on some example inputs. The function and the
     /// inputs should be provided using a
-    /// [`Puzzle`](.//struct.Puzzle.html)
+    /// [`Puzzle`](./struct.Puzzle.html)
     /// instance.
     ///
     /// # Example
@@ -207,9 +271,16 @@ impl<T> AocDay<T> {
     /// );
     /// ~~~~
     pub fn test(&self, puzzle: &Puzzle<T, impl Display>) {
-        println!("Testing day {} of AOC {}", self.day, self.year);
+        println!();
+        print_info!(self, puzzle);
+        println!();
         for (i, example) in puzzle.examples.iter().enumerate() {
-            println!("Part {}, Example {}: {}", puzzle.part, i + 1, (puzzle.solver)((self.serializer)(example.to_string())));
+            #[cfg(feature = "colored-output")]
+            print!("{} {}: ", "Example".bright_blue(), i + 1);
+            #[cfg(not(feature = "colored-output"))]
+            print!("Example {}: ", i + 1);
+            std::io::stdout().flush().unwrap();
+            run_solver!(puzzle, (self.serializer)(example.to_string()));
         }
     }
 
@@ -287,6 +358,7 @@ impl<T> AocDay<T> {
                 }
             },
         };
+
         let mut contents = String::new();
         println!("{}", contents);
         input_file.read_to_string(&mut contents)?;
@@ -298,9 +370,10 @@ impl<T> AocDay<T> {
             let mut input_file = File::open(&self.input_path)?;
             input_file.read_to_string(&mut contents)?;
         }
-        let input = (self.serializer)(contents.trim().to_string());
-        println!("Running day {} of AOC {}", self.day, self.year);
-        println!("Part {}: {}", puzzle.part, (puzzle.solver)(input));
+
+        print_info!(self, puzzle);
+        run_solver!(puzzle, (self.serializer)(contents.trim().to_string()));
+
         Ok(())
     }
 }

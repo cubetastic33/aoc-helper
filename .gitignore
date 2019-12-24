@@ -1,5 +1,6 @@
 /.idea
 /target
 /inputs
+/aoc_helper.toml
 **/*.rs.bk
 Cargo.lock
